@@ -14,9 +14,11 @@ connection.connect(function(err) {
 	console.log("connected as id " + connection.threadId);
 });
  
-connection.query('', function (error, results, fields) {
-  if (error) throw error;
-  console.log(' ', results);
+connection.query('SELECT * FROM products', function (err, res) {
+  if (err) throw err;
+  for (var i = 0; i < res.length; i++) {
+  console.log("ID: " + res[i].tem_id + "\nProduct: " + res[i].product_name + "\nPrice: $" + res[i].price + "\n\n");
+  }
 });
  
 // connection.end();
