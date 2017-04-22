@@ -72,26 +72,28 @@
              // console.log(answer.numberOf); //log user answer for number of units desired
              // console.log(res[0].stock_quantity); //log current stock quantity 
              if (res[0].stock_quantity < answer.numberOf) {
-                console.log("Insufficient quantity! Please try again");
-             }  else {
-                var adjustedStock = res[0].stock_quantity - answer.numberOf;
-                var name = res[0].product_name;
-                console.log("Remaining stock: " + adjustedStock);
-                var totalCost = ("$" + parseFloat(answer.numberOf * res[0].price));
-                var queryUpdate = "UPDATE products SET stock_quantity = " + mysql.escape(parseInt(adjustedStock)) + " WHERE tem_id = " + mysql.escape(parseInt(answer.productId));   //use mysql escape method directly
-                connection.query(queryUpdate, function(err, res) {
-                    console.log("Results of update Query: " + res);
-                    console.log("You Purchased: " + answer.numberOf + " " + name + "'s");
-                    console.log("Your total cost is: " + totalCost );
-                });
-             }     
+                 console.log("Insufficient quantity! Please try again");
+                 productSearch();
+             } else {
+                 var adjustedStock = res[0].stock_quantity - answer.numberOf;
+                 var name = res[0].product_name;
+                 console.log("Remaining stock: " + adjustedStock);
+                 var totalCost = ("$" + parseFloat(answer.numberOf * res[0].price));
+                 var queryUpdate = "UPDATE products SET stock_quantity = " + mysql.escape(parseInt(adjustedStock)) + " WHERE tem_id = " + mysql.escape(parseInt(answer.productId)); //use mysql escape method directly
+                 connection.query(queryUpdate, function(err, res) {
+                     // console.log("Results of update Query: " + res);
+                     console.log("You Purchased: " + answer.numberOf + " " + name + "'s");
+                     console.log("Your total cost is: " + totalCost);
+                     productSearch();
+                 });
+             }
          });
      });
  };
- 
 
 
-                         
+
+
  //                 
  //                         var totalCost = parseInt(answer.numberOf * res[i].price);
  //                         console.log("Total Cost: " + totalCost);
