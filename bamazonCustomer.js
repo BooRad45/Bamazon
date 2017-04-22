@@ -18,6 +18,8 @@
      runSearch();
  });
 
+ //////////////INQUIRER ASKS IF USER WOULD LIKE TO SEE PRODUCTS IN STOCK///////////////
+ //////////////HACKY FIX TO KEEP INQUIRER QUESTION FROM APPEARING BEFORE PRODUCT LIST///////
  var runSearch = function() {
      inquirer.prompt([{
          name: "SeeProducts",
@@ -32,9 +34,9 @@
                  if (err) throw err;
                  for (var i = 0; i < res.length; i++) {
                      console.log("ID: " + res[i].tem_id + "\nProduct: " + res[i].product_name + "\nPrice: $" + res[i].price + "\n\n");
-                     
+                     ////////ABOVE IS LIST OF PRODUCTS, ID'S, PRICES IN STOCK////////////
                  }
-                 productSearch();
+                 productSearch(); ////CALL PRODUCT SEARCH SO USER CAN SHOP ON BAMAZON
              });
          }
 
@@ -42,13 +44,13 @@
      });
  };
 
-
+ ////////INQUIRER ASKS TWO QUESTIONS OF USER (PRODUCT ID????   &&&&    HOW MANY???)/////////////
  var productSearch = function() {
      inquirer.prompt([{
          name: "productId",
          type: "input",
          message: "What product would you like to buy (use ID#)?",
-         validate: function(value) {
+         validate: function(value) { ////////VALIDATING TO SEE IF THEY PICKED A NUMBER/////////////
              if (isNaN(value) === false) {
                  return true;
              }
@@ -64,31 +66,38 @@
              }
              return false;
          }
-     }]).then(function(answer) {
-         var query = "SELECT product_name FROM products WHERE ?";
+     }]).then(function(answer) { ///////////BEGIN SQL QUERY TO CHECK IF ENOUGH IN STOCK///////////
+         var query = "SELECT * FROM products WHERE ?;" //select column stock quantity from table products where product id by user matches id in table products
          connection.query(query, { tem_id: answer.productId }, function(err, res) {
-             console.log(res);
-             for (var i = 0; i < res.length; i++) {
-                 console.log("Product: " + res[i].product_name);
-                 console.log("Number of units requested: " + answer.numberOf);
-                 if (res[i].stock_quantity < answer.numberOf) {
-                     console.log("Insufficient quantity! Please try again");
-                     productSearch();
-                 } else {
-                     var updateStock = parseInt(res[i].stock_quantity - answer.numberOf);
-                     console.log("stock quantity: " + res[i].stock_quantity);
-                     console.log("answer.number of: " + answer.numberOf);
-                     var totalCost = parseFloat(answer.numberOf * res[i].price);
-                     console.log("Total Cost: " + totalCost);
-                     connection.query('UPDATE products SET stock_quantity = ? WHERE tem_id = ?', ['updateStock', answer.productId], function(error, results, fields) {
-                         if (error) throw error;
-                         
-                     });
-                 }
-             }
+             // console.log(answer.numberOf); //log user answer for number of units desired
+             // console.log(res[0].stock_quantity); //log current stock quantity 
+             if (res[0].stock_quantity < answer.numberOf) {
+                console.log("Insufficient quantity! Please try again");
+             }  else {
+                var adjustedStock = res[0].stock_quantity - answer.numberOf;
+                var name = res[0].product_name;
+                console.log("Remaining stock: " + adjustedStock);
+                var totalCost = ("$" + parseFloat(answer.numberOf * res[0].price));
+                var queryUpdate = "UPDATE products SET stock_quantity = " + mysql.escape(parseInt(adjustedStock)) + " WHERE tem_id = " + mysql.escape(parseInt(answer.productId));   //use mysql escape method directly
+                connection.query(queryUpdate, function(err, res) {
+                    console.log("Results of update Query: " + res);
+                    console.log("You Purchased: " + answer.numberOf + " " + name + "'s");
+                    console.log("Your total cost is: " + totalCost );
+                });
+             }     
          });
      });
  };
+ 
+
+
+                         
+ //                 
+ //                         var totalCost = parseInt(answer.numberOf * res[i].price);
+ //                         console.log("Total Cost: " + totalCost);
+ //                         connection.query('UPDATE products SET stock_quantity = ? WHERE tem_id = ?', ['updateStock', answer.productId], function(error, results, fields) {
+ //                             if (error) throw error;
+
 
 
 
