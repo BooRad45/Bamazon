@@ -94,20 +94,4 @@
 
 
 
- //                 
- //                         var totalCost = parseInt(answer.numberOf * res[i].price);
- //                         console.log("Total Cost: " + totalCost);
- //                         connection.query('UPDATE products SET stock_quantity = ? WHERE tem_id = ?', ['updateStock', answer.productId], function(error, results, fields) {
- //                             if (error) throw error;
-
-
-
-
-
-
- // connection.query('SELECT * FROM products', function (err, res) {
- //   if (err) throw err;
- //   for (var i = 0; i < res.length; i++) {
- //   console.log("ID: " + res[i].tem_id + "\nProduct: " + res[i].product_name + "\nPrice: $" + res[i].price + "\n\n");  
- //     }
- //   });
+ 
